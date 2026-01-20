@@ -4,12 +4,14 @@ import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ProductsService, Product, CreateProductDto } from '../../services/products.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-products',
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './products.html',
   styleUrl: './products.scss',
+  standalone: true
 })
 export class Products implements OnInit {
   products$!: Observable<Product[]>;
@@ -19,7 +21,10 @@ export class Products implements OnInit {
   totalPages: number = 1;
   totalItems: number = 0;
 
-  constructor(private productsService: ProductsService) {
+  constructor(
+    private productsService: ProductsService,
+    private toastr: ToastrService
+  ) {
     this.productForm = new FormGroup({
       name: new FormControl('', Validators.required),
       price: new FormControl(0, [Validators.required, Validators.min(0)]),
@@ -50,11 +55,13 @@ export class Products implements OnInit {
         next: (product) => {
           this.productForm.reset();
           this.isCreating = false;
+          this.toastr.success('Producto creado');
           this.loadProducts(this.currentPage);
         },
         error: (err) => {
-          console.error('Error creating product', err);
+          console.error('Error ', err);
           this.isCreating = false;
+          this.toastr.error('Error al crear el producto');
         }
       });
     }
@@ -63,9 +70,13 @@ export class Products implements OnInit {
   deleteProduct(id: number): void {
     this.productsService.deleteProduct(id).subscribe({
       next: () => {
+        this.toastr.success('Producto eliminado');
         this.loadProducts(this.currentPage);
       },
-      error: (err) => console.error('Error deleting product', err)
+      error: (err) => {
+        console.error('Error', err);
+        this.toastr.error('Error al eliminar el producto');
+      }
     });
   }
 
