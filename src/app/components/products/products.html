@@ -1,0 +1,73 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Gestión de Productos</h1>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5>Crear Nuevo Producto</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="productForm" (ngSubmit)="createProduct()">
+        <div class="row">
+          <div class="col-md-4">
+            <label for="name" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="name" formControlName="name">
+          </div>
+          <div class="col-md-3">
+            <label for="price" class="form-label">Precio</label>
+            <input type="number" class="form-control" id="price" formControlName="price" min="0" step="0.01">
+          </div>
+          <div class="col-md-3">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" formControlName="stock" min="0">
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary" [disabled]="!productForm.valid || isCreating">
+              {{ isCreating ? 'Creando...' : 'Crear' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5>Lista de Productos</h5>
+    </div>
+    <div class="card-body">
+      @if (products$ | async; as products) {
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (product of products; track product.id) {
+                  <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price | currency:'USD':'symbol':'1.2-2' }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>
+                      <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)">Eliminar</button>
+                    </td>
+                  </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+      @else {
+          <div class="text-center text-muted">
+            No hay productos disponibles.
+          </div>
+      }
+    </div>
+  </div>
+</div>
