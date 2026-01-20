@@ -36,8 +36,8 @@ export class ProductsService {
 
   constructor(private http: HttpClient) { }
 
-  getProducts(): Observable<PaginatedResponse> {
-    return this.http.get<PaginatedResponse>(this.apiUrl);
+  getProducts(page: number = 1, limit: number = 10): Observable<PaginatedResponse> {
+    return this.http.get<PaginatedResponse>(`${this.apiUrl}?page=${page}&limit=${limit}`);
   }
 
   createProduct(product: CreateProductDto): Observable<Product> {

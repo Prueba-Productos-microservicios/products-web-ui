@@ -36,37 +36,51 @@
     </div>
     <div class="card-body">
       @if (products$ | async; as products) {
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (product of products; track product.id) {
-                  <tr>
-                    <td>{{ product.id }}</td>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.price | currency:'USD':'symbol':'1.2-2' }}</td>
-                    <td>{{ product.stock }}</td>
-                    <td>
-                      <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)">Eliminar</button>
-                    </td>
-                  </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-      @else {
+        @if (products && products.length > 0) {
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Stock</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (product of products; track product.id) {
+                <tr>
+                  <td>{{ product.id }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.price | currency:'USD':'symbol':'1.2-2' }}</td>
+                  <td>{{ product.stock }}</td>
+                  <td>
+                    <button class="btn btn-danger btn-sm" (click)="deleteProduct(product.id)">Eliminar</button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+            <nav aria-label="Paginador de productos">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <a class="page-link" href="#" (click)="prevPage(); $event.preventDefault()">Anterior</a>
+                </li>
+                <li class="page-item" *ngFor="let page of getPages()" [class.active]="page === currentPage">
+                  <a class="page-link" href="#" (click)="goToPage(page); $event.preventDefault()">{{ page }}</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <a class="page-link" href="#" (click)="nextPage(); $event.preventDefault()">Siguiente</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        } @else {
           <div class="text-center text-muted">
             No hay productos disponibles.
           </div>
+        }
       }
     </div>
   </div>
